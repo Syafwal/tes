@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syafwal to-do-list</title>
+    <link href="wallUts.css" rel="stylesheet">
+    <style>
+        .completed {
+          text-decoration: line-through;
+        }
+      </style>
+</head>
+<body>
+    <div id="app">
+        <h1><strong>Wall Todo-list</strong></h1>
+        <form onsubmit="addItem(event)">
+            <input id="new-item" placeholder="Tambahkan Kegiatan">
+            <button type="submit">Tambah</button>
+          </form>
+          <label>
+            <input type="checkbox" id="hide-completed" onchange="toggleHideCompleted()">
+            Sembunyikan Yang Selesai
+          </label>
+          <ul id="todo-list"></ul>
+          <button onclick="clearCompleted()" class="hapus">Hapus Yang Selesai</button>
+    </div>
+    
+    <script>
+        // Define a global state variable to store the to-do items
+        let state = {
+          items: [],
+          idCounter: 0,
+          hideCompleted: false,
+        };
+  
+        function addItem(event) {
+          event.preventDefault();
+          const input = document.getElementById('new-item');
+          const newItemText = input.value.trim();
+  
+          if (newItemText) {
+            state.items.push({
+              id: state.idCounter++,
+              text: newItemText,
+              completed: false,
+            });
+  
+            input.value = '';
+            renderList();
+          }
+        }
+  
+        function completeItem(itemId) {
+          const itemIndex = state.items.findIndex(item => item.id === itemId);
+          state.items[itemIndex].completed = true;
+          renderList();
+        }
+  
+        function deleteItem(itemId) {
+          state.items = state.items.filter(item => item.id !== itemId);
+          renderList();
+        }
+  
+        function clearCompleted() {
+          state.items = state.items.filter(item => !item.completed);
+          renderList();
+        }
+  
+        function toggleHideCompleted() {
+          state.hideCompleted = !state.hideCompleted;
+          renderList();
+        }
+  
+        function renderList() {
+          const listElement = document.getElementById('todo-list');
+          listElement.innerHTML = '';
+  
+          for (const item of state.items) {
+            if (!item.completed || !state.hideCompleted) {
+              const listItem = document.createElement('li');
+              const textSpan = document.createElement('span');
+              const completeButton = document.createElement('button');
+              const deleteButton = document.createElement('button');
+  
+              textSpan.textContent = item.text;
+              completeButton.textContent = 'Selesai';
+              completeButton.addEventListener('click', () => completeItem(item.id));
+              deleteButton.textContent = 'Hapus';
+              deleteButton.addEventListener('click', () => deleteItem(item.id));
+  
+              if (item.completed) {
+                textSpan.classList.add('completed');
+              }
+  
+              listItem.appendChild(textSpan);
+              listItem.appendChild(completeButton);
+              listItem.appendChild(deleteButton);
+              listElement.appendChild(listItem);
+            }
+          }
+        }
+  
+        // Initial render
+        renderList();
+      </script>
+      <footer>
+          <div class="footer-bottom">
+            <p>copyright @Syafwal</p>
+          </div>
+      </footer>
+</body>
+</html>
